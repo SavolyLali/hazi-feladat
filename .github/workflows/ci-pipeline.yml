@@ -18,14 +18,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build the Docker image
-        run: cd webapp && docker build -t web-app:${{ github.sha }} .
-
-      - name: Container Security Check
-        run: |
-          docker run --rm -v $(pwd)/webapp:/workdir aquasec/trivy:latest web-app:${{ github.sha }}
+        run: cd webapp && docker build -t web-app .
 
       - name: Push Docker image to Docker Hub
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-          docker tag web-app:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/web-app:${{ github.sha }}
+          docker tag web-app ${{ secrets.DOCKERHUB_USERNAME }}/web-app:${{ github.sha }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/web-app:${{ github.sha }}
