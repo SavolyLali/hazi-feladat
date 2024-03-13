@@ -18,10 +18,19 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build the Docker image
-        run: cd webapp && docker build -t web-app .
+        run: cd webapp && docker build -t ${{secrets.DOCKERHUB_USERNAME}}/web-app:latest -t ${{ secrets.DOCKERHUB_USERNAME }}/web-app:${{ github.sha }} .
+
+#      - name: Run Trivy vulnerability scanner
+#        uses: aquasecurity/trivy-action@master
+#        with:
+#          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/web-app:${{ github.sha }}
+#          format: 'table'
+#          exit-code: '1'
+#          ignore-unfixed: true
+#          vuln-type: 'os,library'
+#          severity: 'CRITICAL,HIGH'
 
       - name: Push Docker image to Docker Hub
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-          docker tag web-app ${{ secrets.DOCKERHUB_USERNAME }}/web-app:${{ github.sha }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/web-app:${{ github.sha }}
+          docker push -a ${{ secrets.DOCKERHUB_USERNAME }}/web-app
