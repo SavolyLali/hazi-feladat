@@ -12,25 +12,25 @@ terraform {
 }
 
 module "vpc" {
-  source = "./vpc.tf"
+  source = "./modules/vpc.tf"
 }
 
 module "internet_gateway" {
-  source = "./internet_gateway.tf"
+  source = "./modules/internet_gateway.tf"
 }
 
 module "subnet" {
-  source = "./subnet.tf"
+  source = "./modules/subnet.tf"
 }
 
 module "route_table" {
-  source = "./route_table.tf"
+  source = "./modules/route_table.tf"
 }
 
 module "security_group" {
-  source = "./security_group.tf"
+  source = "./modules/security_group.tf"
 }
 
 module "ec2_instance" {
-  source = "./ec2_instance.tf"
+  source = "./modules/ec2_instance.tf"
 }
