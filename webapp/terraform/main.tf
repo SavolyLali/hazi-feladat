@@ -11,30 +11,26 @@ terraform {
   }
 }
 
-resource "aws_vpc" "main" {
+module "vpc" {
   source = "./vpc.tf"
 }
 
-resource "aws_internet_gateway" "main" {
+module "internet_gateway" {
   source = "./internet_gateway.tf"
 }
 
-resource "aws_subnet" "main" {
+module "subnet" {
   source = "./subnet.tf"
 }
 
-resource "aws_route_table" "public" {
+module "route_table" {
   source = "./route_table.tf"
 }
 
-resource "aws_route_table_association" "public" {
-  source = "./route_table.tf"
-}
-
-resource "aws_security_group" "instance_sg" {
+module "security_group" {
   source = "./security_group.tf"
 }
 
-resource "aws_instance" "web" {
+module "ec2_instance" {
   source = "./ec2_instance.tf"
 }
