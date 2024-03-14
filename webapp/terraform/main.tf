@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-west-3"
+  region = var.aws_region
 }
 
 resource "aws_vpc" "main" {
@@ -12,8 +12,8 @@ resource "aws_internet_gateway" "main" {
 
 resource "aws_subnet" "main" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"
-  availability_zone       = "eu-west-3a"
+  cidr_block              = var.subnet_cidr_block
+  availability_zone       = var.availability_zone
   map_public_ip_on_launch = true
 }
 
@@ -50,8 +50,8 @@ resource "aws_security_group" "instance_sg" {
 }
 
 resource "aws_instance" "web" {
-  ami           = "ami-0546127e0cf2c6498"
-  instance_type = "t2.micro"
+  ami           = var.instance_ami
+  instance_type = var.instance_type
   subnet_id     = aws_subnet.main.id
 
   user_data = <<-EOF
@@ -62,6 +62,3 @@ resource "aws_instance" "web" {
               docker run -d -p 8080:8080 savolylali/web-app
               EOF
 }
-
-
-
