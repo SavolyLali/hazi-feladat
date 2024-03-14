@@ -2,35 +2,30 @@ provider "aws" {
   region = var.aws_region
 }
 
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.0"
-    }
-  }
-}
-
 module "vpc" {
-  source = "./modules/vpc.tf"
+  source = "./vpc"
 }
 
 module "internet_gateway" {
-  source = "./modules/internet_gateway.tf"
+  source = "./gateway"
 }
 
 module "subnet" {
-  source = "./modules/subnet.tf"
+  source = "./subnet"
 }
 
 module "route_table" {
-  source = "./modules/route_table.tf"
+  source = "./route_table"
+}
+
+module "route_table_association" {
+  source = "./route_table"
 }
 
 module "security_group" {
-  source = "./modules/security_group.tf"
+  source = "./security_group"
 }
 
-module "ec2_instance" {
-  source = "./modules/ec2_instance.tf"
+module "instance" {
+  source = "./instance"
 }
