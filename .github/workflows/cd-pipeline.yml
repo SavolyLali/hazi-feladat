@@ -39,5 +39,12 @@ jobs:
           cd webapp/terraform
           terraform plan -out=tfplan.binary
 
+      - name: tfsec Security Scan
+        run: |
+          cd webapp/terraform
+          curl -L "$(curl -s https://api.github.com/repos/tfsec/tfsec/releases/latest | grep -o -E "https://github.com/tfsec/tfsec/releases/download/.*/tfsec-linux-amd64")" -o tfsec
+          chmod +x tfsec
+          ./tfsec
+
       - name: Terraform Apply
         run: cd webapp/terraform && terraform apply -auto-approve tfplan.binary
