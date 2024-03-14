@@ -1,0 +1,43 @@
+name: Terraform CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Configure AWS credentials
+        run: |
+          mkdir -p ~/.aws/
+          echo "[default]" > ~/.aws/credentials
+          echo "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials
+          echo "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+
+      - name: Terraform Init
+        run: cd webapp/terraform && terraform init
+
+      - name: Terraform Validate
+        run: cd webapp/terraform && terraform validate
+
+      - name: Terraform Format
+        run: cd webapp/terraform && terraform fmt -check=true -diff=true
+
+      - name: Terraform Plan
+        run: |
+          cd webapp/terraform
+          terraform plan -out=tfplan.binary
+
+      - name: Terraform Apply
+        run: cd webapp/terraform && terraform apply -auto-approve tfplan.binary
