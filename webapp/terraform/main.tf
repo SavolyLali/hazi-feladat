@@ -1,7 +1,3 @@
-//külön fileokban tárolni a különböző resource-okat
-//backend tárolása
-//tfvars file
-
 provider "aws" {
   region = "eu-west-3"
 }
@@ -67,7 +63,5 @@ resource "aws_instance" "web" {
               EOF
 }
 
-//ARN
-output "public_ip" {
-  value = aws_instance.web.public_ip
-}
+
+
