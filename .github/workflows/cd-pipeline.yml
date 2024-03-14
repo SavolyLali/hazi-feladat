@@ -25,14 +25,17 @@ jobs:
           echo "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.aws/credentials
           echo "aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
 
-      - name: Navigate to the terraform directory
-        run: cd webapp/terraform
-
       - name: Terraform Init
-        run: terraform init
+        run: cd webapp/terraform && terraform init
+
+      - name: Terraform Validate
+        run: cd webapp/terraform && terraform validate
+
+      - name: Terraform Format
+        run: cd webapp/terraform && terraform fmt -check=true -diff=true
 
       - name: Terraform Plan
-        run: terraform plan
+        run: cd webapp/terraform && terraform plan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: cd webapp/terraform && terraform apply -auto-approve
