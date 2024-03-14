@@ -2,63 +2,39 @@ provider "aws" {
   region = var.aws_region
 }
 
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+  }
+}
+
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
+  source = "./vpc.tf"
 }
 
 resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
+  source = "./internet_gateway.tf"
 }
 
 resource "aws_subnet" "main" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.subnet_cidr_block
-  availability_zone       = var.availability_zone
-  map_public_ip_on_launch = true
+  source = "./subnet.tf"
 }
 
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
-  }
+  source = "./route_table.tf"
 }
 
 resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.main.id
-  route_table_id = aws_route_table.public.id
+  source = "./route_table.tf"
 }
 
 resource "aws_security_group" "instance_sg" {
-  vpc_id = aws_vpc.main.id
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  source = "./security_group.tf"
 }
 
 resource "aws_instance" "web" {
-  ami           = var.instance_ami
-  instance_type = var.instance_type
-  subnet_id     = aws_subnet.main.id
-
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y docker
-              service docker start
-              docker run -d -p 8080:8080 savolylali/web-app
-              EOF
+  source = "./ec2_instance.tf"
 }
